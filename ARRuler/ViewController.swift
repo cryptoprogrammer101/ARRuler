@@ -14,6 +14,8 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     
     @IBOutlet var sceneView: ARSCNView!
     
+    var dotNodes = [SCNNode]()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -98,6 +100,43 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         
         // display the node
         sceneView.scene.rootNode.addChildNode(dotNode)
+        
+        // add the dotNode to the list of dot nodes
+        dotNodes.append(dotNode)
+        
+        // if there are at least two dots in the array
+        if dotNodes.count >= 2 {
+            
+            // calculate the distance between them
+            calculate()
+        }
+        
+    }
+    
+    /// calculates the distance between the two points
+    func calculate() {
+    
+        // define the starting point
+        let start = dotNodes[0]
+        
+        // define the ending point
+        let end = dotNodes[1]
+        
+        // define side "a" of the right triangle
+        let a = end.position.x - start.position.x
+        
+        // define side "b" of the right triangle
+        let b = end.position.y - start.position.y
+
+        // define side "c", the hypotenuse, of the right triangle
+        let c = end.position.z - start.position.z
+        
+        // use the three sides of the triangle to calculate the distance
+        // d = √(a^2 + b^2 + c^2)
+        // take the absolute value of the expression
+        let distance = abs(sqrt(pow(a, 2) + pow(b, 2) + pow(c, 2)))
+        
+        
         
     }
     
