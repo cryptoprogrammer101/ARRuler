@@ -29,9 +29,6 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         // show statistics such as fps and timing information
         sceneView.showsStatistics = K.showsStatistics
         
-        // show the yellow dots when AR analysis is being done
-        sceneView.debugOptions = [ARSCNDebugOptions.showFeaturePoints]
-        
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -58,7 +55,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         
         // if there are already two dot nodes in the array
-        if dotNodes.count >= 2{
+        if dotNodes.count >= K.maximumDots {
             
             // loop through every dot node
             for dot in dotNodes {
@@ -100,13 +97,13 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     func addDot(at hitResult: ARHitTestResult) {
         
         // create a dot as a 3D sphere with a radius of 0.5 cm
-        let dotGeometry = SCNSphere(radius: 0.005)
+        let dotGeometry = SCNSphere(radius: K.dotRadius)
         
         // create a material to go on the dot
         let material = SCNMaterial()
         
         // change the color to red
-        material.diffuse.contents = UIColor.red
+        material.diffuse.contents = K.dotColor
         
         // give this red color to the dotGeometry
         dotGeometry.materials = [material]
@@ -125,7 +122,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         dotNodes.append(dotNode)
         
         // if there are at least two dots in the array
-        if dotNodes.count >= 2 {
+        if dotNodes.count >= K.maximumDots {
             
             // calculate the distance between them
             calculate()
@@ -137,10 +134,10 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     func calculate() {
     
         // define the starting point
-        let start = dotNodes[0]
+        let start = dotNodes[K.startDotIndex]
         
         // define the ending point
-        let end = dotNodes[1]
+        let end = dotNodes[K.endDotIndex]
         
         // define side "a" of the right triangle
         let a = end.position.x - start.position.x
@@ -154,9 +151,14 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         // use the three sides of the triangle to calculate the distance
         // d = √(a^2 + b^2 + c^2)
         // take the absolute value of the expression
-        let distance = abs(sqrt(pow(a, 2) + pow(b, 2) + pow(c, 2)))
+        let distance = sqrt(pow(a, K.power) + pow(b, K.power) + pow(c, K.power))
         
-        updateText(text: "\(distance)", atPosition: end.position)
+        // format the distance by taking the absolute value, and rounding it to 2 decimal places
+        let modifiedDistance = String(format: K.roundingFormat, abs(distance))
+        
+        
+        // update the text of the distance
+        updateText(text: "\(modifiedDistance) \(K.units)", atPosition: end.position)
         
     }
     
@@ -171,20 +173,22 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         
         // create a text geometry with the text we passed in
         // the extrusionDepth is the depth of the text
-        let textGeometry = SCNText(string: text, extrusionDepth: 1.0)
+        let textGeometry = SCNText(string: text, extrusionDepth: K.textDepth)
         
         // inside the first material attached to this geometry (as we're only putting one material on anyways)
         // set the color of the text to red
-        textGeometry.firstMaterial?.diffuse.contents = UIColor.red
+        textGeometry.firstMaterial?.diffuse.contents = K.textColor
         
         // create a node for the text
         textNode = SCNNode(geometry: textGeometry)
         
         // set the position of the node to 1cm above the end point on the y-axis
-        textNode.position = SCNVector3(position.x, position.y + 0.01, position.z)
+        textNode.position = SCNVector3(position.x, position.y + K.changeInYPosition, position.z)
         
         // scale down the size of the node, as it is too big
-        textNode.scale = SCNVector3(0.01, 0.01, 0.01)
+        textNode.scale = SCNVector3(K.textScale, K.textScale, K.textScale)
+        
+        textNode.rotation = SCNVector4(K.xTextRotation, K.yTextRotation, K.zTextRotation, K.angleTextRotation)
         
         // add the node into the scene
         sceneView.scene.rootNode.addChildNode(textNode)
