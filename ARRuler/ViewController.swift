@@ -14,7 +14,11 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     
     @IBOutlet var sceneView: ARSCNView!
     
+    // create an array for the dot nodes
     var dotNodes = [SCNNode]()
+    
+    // define the node for the text to be displayed
+    var textNode = SCNNode()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -52,6 +56,22 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     ///   - touches: the list of touches detected
     ///   - event: the event to which the touches belong
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        
+        // if there are already two dot nodes in the array
+        if dotNodes.count >= 2{
+            
+            // loop through every dot node
+            for dot in dotNodes {
+                
+                // delete the dot node
+                dot.removeFromParentNode()
+                
+            }
+            
+            // clear the array
+            dotNodes = [SCNNode]()
+            
+        }
         
         // try to access the first touch detected
         // and retrieve its location on the screen (sceneView)
@@ -142,6 +162,9 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     
     func updateText(text: String, atPosition position: SCNVector3) {
         
+        // clear the previous text
+        textNode.removeFromParentNode()
+        
         // create a text geometry with the text we passed in
         // the extrusionDepth is the depth of the text
         let textGeometry = SCNText(string: text, extrusionDepth: 1.0)
@@ -151,7 +174,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         textGeometry.firstMaterial?.diffuse.contents = UIColor.red
         
         // create a node for the text
-        let textNode = SCNNode(geometry: textGeometry)
+        textNode = SCNNode(geometry: textGeometry)
         
         // set the position of the node to 1cm above the end point on the y-axis
         textNode.position = SCNVector3(position.x, position.y + 0.01, position.z)
