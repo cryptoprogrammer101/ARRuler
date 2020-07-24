@@ -63,4 +63,10 @@ class K {
     // units for the distance (meters)
     static let units = "m"
     
+    // array of indices
+    static let indicesArray: [Int32] = [0, 1]
+    
+    // color of the line
+    static let lineColor = UIColor.red
+    
 }

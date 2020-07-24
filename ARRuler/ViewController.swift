@@ -20,6 +20,12 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     // define the node for the text to be displayed
     var textNode = SCNNode()
     
+    // define the vertices of the line
+    var vertices = [SCNVector3]()
+    
+    // define the line connecting the points
+    var line = SCNNode()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -65,8 +71,14 @@ class ViewController: UIViewController, ARSCNViewDelegate {
                 
             }
             
-            // clear the array
+            // remove the line
+            line.removeFromParentNode()
+            
+            // clear the dot nodes
             dotNodes = [SCNNode]()
+            
+            // clear the line
+            vertices = [SCNVector3]()
             
         }
         
@@ -118,15 +130,54 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         // display the node
         sceneView.scene.rootNode.addChildNode(dotNode)
         
-        // add the dotNode to the list of dot nodes
+        // add the dot node to the list of dot nodes
         dotNodes.append(dotNode)
+        
+        // add the position of the dot node to the array of vertices of a line
+        vertices.append(dotNode.position)
         
         // if there are at least two dots in the array
         if dotNodes.count >= K.maximumDots {
             
-            // calculate the distance between them
+            // draw a line between the two points
+            drawLine()
+            
+            // and calculate the distance between them
             calculate()
+            
         }
+        
+    }
+    
+    /// Draws a line between two points
+    func drawLine() {
+        
+        // create the geometry of the line
+        let lineGeometry = SCNGeometry(
+            // set the source of the geometry to the array of vertices
+            sources: [
+                // "each SCNGeometrySource object describes an attribute of all vertices in the geometry (vertex position, surface normal vector, color, or texture mapping coordinates)"
+                SCNGeometrySource(vertices: vertices)
+            ],
+            // describe how to connect the vertices of the line
+            elements: [
+                // "each SCNGeometryElement object describes how vertices from the geometry sources are combined into polygons to create the geometry’s shape"
+                SCNGeometryElement(
+                    indices: [Int32](K.indicesArray),
+                    primitiveType: .line
+                )
+            ]
+        )
+        
+        // inside the first material attached to this geometry (as we're only putting one material on anyways)
+        // set the color of the text to black
+        lineGeometry.firstMaterial?.diffuse.contents = K.lineColor
+        
+        // create a line from the geometry we created earlier
+        line = SCNNode(geometry: lineGeometry)
+        
+        // show the line
+        sceneView.scene.rootNode.addChildNode(line)
         
     }
     
