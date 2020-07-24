@@ -133,7 +133,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         
     }
     
-    /// calculates the distance between the two points
+    /// Calculates the distance between the two points
     func calculate() {
     
         // define the starting point
@@ -160,6 +160,10 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         
     }
     
+    /// Updates the distance text
+    /// - Parameters:
+    ///   - text: the text to display (the distance between the points)
+    ///   - position: the position of the endpoint
     func updateText(text: String, atPosition position: SCNVector3) {
         
         // clear the previous text
