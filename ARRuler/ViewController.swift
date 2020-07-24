@@ -136,7 +136,31 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         // take the absolute value of the expression
         let distance = abs(sqrt(pow(a, 2) + pow(b, 2) + pow(c, 2)))
         
+        updateText(text: "\(distance)", atPosition: end.position)
         
+    }
+    
+    func updateText(text: String, atPosition position: SCNVector3) {
+        
+        // create a text geometry with the text we passed in
+        // the extrusionDepth is the depth of the text
+        let textGeometry = SCNText(string: text, extrusionDepth: 1.0)
+        
+        // inside the first material attached to this geometry (as we're only putting one material on anyways)
+        // set the color of the text to red
+        textGeometry.firstMaterial?.diffuse.contents = UIColor.red
+        
+        // create a node for the text
+        let textNode = SCNNode(geometry: textGeometry)
+        
+        // set the position of the node to 1cm above the end point on the y-axis
+        textNode.position = SCNVector3(position.x, position.y + 0.01, position.z)
+        
+        // scale down the size of the node, as it is too big
+        textNode.scale = SCNVector3(0.01, 0.01, 0.01)
+        
+        // add the node into the scene
+        sceneView.scene.rootNode.addChildNode(textNode)
         
     }
     
