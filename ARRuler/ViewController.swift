@@ -170,7 +170,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         )
         
         // inside the first material attached to this geometry (as we're only putting one material on anyways)
-        // set the color of the text to black
+        // set the color of the text to red
         lineGeometry.firstMaterial?.diffuse.contents = K.lineColor
         
         // create a line from the geometry we created earlier
@@ -201,15 +201,17 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         
         // use the three sides of the triangle to calculate the distance
         // d = √(a^2 + b^2 + c^2)
-        // take the absolute value of the expression
         let distance = sqrt(pow(a, K.power) + pow(b, K.power) + pow(c, K.power))
         
-        // format the distance by taking the absolute value, and rounding it to 2 decimal places
-        let modifiedDistance = String(format: K.roundingFormat, abs(distance))
+        // convert the distance in meters into inches by taking the absolute value of the distance and using the conversion factor
+        let convertedDistance = abs(distance) * K.metersToInchesConversionFactor
+        
+        // format the distance by rounding it to 2 decimal places
+        let formattedDistance = String(format: K.roundingFormat, convertedDistance)
         
         
         // update the text of the distance
-        updateText(text: "\(modifiedDistance) \(K.units)", atPosition: end.position)
+        updateText(text: "\(formattedDistance) \(K.units)", atPosition: end.position)
         
     }
     

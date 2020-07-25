@@ -58,15 +58,18 @@ class K {
     static let angleTextRotation = 0
     
     // round the distance
-    static let roundingFormat = "%.3f"
+    static let roundingFormat = "%.2f"
     
-    // units for the distance (meters)
-    static let units = "m"
+    // units for the distance (inches)
+    static let units = "in"
     
     // array of indices
     static let indicesArray: [Int32] = [0, 1]
     
     // color of the line
     static let lineColor = UIColor.red
+    
+    // number of inches in a meter
+    static let metersToInchesConversionFactor: Float = 39.3701
     
 }
